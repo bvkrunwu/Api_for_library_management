@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework_simplejwt",
+    "users.apps.UsersConfig",
 ]
 
 MIDDLEWARE = [
@@ -72,7 +73,7 @@ DATABASES = {
         "NAME": os.getenv("POSTGRES_DB"),
         "USER": os.getenv("POSTGRES_USER"),
         "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-        "HOST": os.getenv("DB_HOST"),
+        "HOST": os.getenv("DB_HOST", "localhost"),
         "PORT": os.getenv("POSTGRES_PORT"),
     }
 }
@@ -91,6 +92,8 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+AUTH_USER_MODEL = "users.User"
 
 LANGUAGE_CODE = "ru-RU"
 
