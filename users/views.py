@@ -1,8 +1,8 @@
-from rest_framework import viewsets
+from rest_framework import generics, viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from users.models import User
-from users.serializers import UserSerializer
+from users.serializers import UserProfileSerializer, UserSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -21,12 +21,11 @@ class UserViewSet(viewsets.ModelViewSet):
         """
         Определяет классы разрешений в зависимости от выполняемого действия.
 
-            Для создания пользователя (action == "create") разрешение AllowAny
-            (регистрация доступна всем). Для всех остальных действий требуется
-            аутентификация (IsAuthenticated).
+        Для создания пользователя (action == "create") разрешение AllowAny
+        (регистрация доступна всем). Для всех остальных действий требуется аутентификация (IsAuthenticated).
 
-            Returns:
-                list: Список классов разрешений для текущего действия.
+        Returns:
+            list: Список классов разрешений для текущего действия.
         """
 
         if self.action == "create":
@@ -37,13 +36,28 @@ class UserViewSet(viewsets.ModelViewSet):
         """
         Выполняет дополнительные действия при создании пользователя.
 
-            Устанавливает флаг is_active=True и корректно сохраняет пароль
-            с хешированием перед сохранением в базу данных.
+        Устанавливает флаг is_active=True и корректно сохраняет пароль
+        с хешированием перед сохранением в базу данных.
 
-            Args:
-                serializer (UserSerializer): Сериализатор с валидированными данными пользователя.
+        Args:
+            serializer (UserSerializer): Сериализатор с валидированными данными пользователя.
         """
 
         user = serializer.save(is_active=True)
         user.set_password(user.password)
         user.save()
+
+
+class UserProfileView(generics.RetrieveAPIView):
+    """
+    API‑представление для получения профиля пользователя.
+
+    Позволяет аутентифицированным пользователям просматривать
+    свой профиль по email. Включает основную информацию о пользователе
+    и историю его платежей.
+    """
+
+    queryset = User.objects.all()
+    serializer_class = UserProfileSerializer
+    lookup_field = "email"
+    permission_classes = (IsAuthenticated,)

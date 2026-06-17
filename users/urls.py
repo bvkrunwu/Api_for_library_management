@@ -7,7 +7,7 @@ from rest_framework_simplejwt.views import (
 )
 
 from users.apps import UsersConfig
-from users.views import UserViewSet
+from users.views import UserProfileView, UserViewSet
 
 app_name = UsersConfig.name
 
@@ -17,4 +17,5 @@ router.register(r"", UserViewSet, basename="user")
 urlpatterns = [
     path("login/", TokenObtainPairView.as_view(permission_classes=(AllowAny,)), name="login"),
     path("token/refresh/", TokenRefreshView.as_view(permission_classes=(AllowAny,)), name="token_refresh"),
+    path("profile/<str:email>/", UserProfileView.as_view(), name="user-profile"),
 ] + router.urls
