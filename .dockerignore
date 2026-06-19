@@ -1,0 +1,5 @@
+__pycache__
+*.pyc
+fixtures
+.coverage
+README.md
